@@ -1,0 +1,757 @@
+{
+  "name": "Healthcare Appointment Booking Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bf75cb02-6d63-4830-8017-92073b22767b",
+      "name": "Telegram Trigger",
+      "webhookId": "d29a5609-8dd3-443f-9b9e-516acfd30259",
+      "credentials": {
+        "telegramApi": {
+          "id": "e9y9eTuITiFuwZpU",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "17L4eRIIYXVqGpEFufBjumpfVKLUnpIbYKYQJiQVxxVs",
+          "mode": "list",
+          "cachedResultName": "Healthcare_Appointments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17L4eRIIYXVqGpEFufBjumpfVKLUnpIbYKYQJiQVxxVs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17L4eRIIYXVqGpEFufBjumpfVKLUnpIbYKYQJiQVxxVs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Appointment ID": "=APT-{{ $now.toMillis() }}",
+            "Patient Name": "={{ $('Parse Booking Details').item.json.name }}",
+            "Telegram Chat ID": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+            "Phone": "={{ $json.phone }}",
+            "Department": "={{ $json.department }}",
+            "Date": "={{ $json.date }}",
+            "Time": "={{ $json.time }}",
+            "Status": "=Confirmed",
+            "Booked On": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Appointment ID",
+              "displayName": "Appointment ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telegram Chat ID",
+              "displayName": "Telegram Chat ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Doctor",
+              "displayName": "Doctor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Booked On",
+              "displayName": "Booked On",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1136,
+        -192
+      ],
+      "id": "8b6a942e-e527-4ca5-94ac-dde52d4605a8",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4yULmbm40vkOfu8B",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        224
+      ],
+      "id": "bb59471b-6a92-433e-b31f-66e99472d42c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a warm and friendly appointment booking \nassistant for City Hospital.\n\nAlways reply in simple English only.\n\nSTEP 1 - GREETING:\nONLY when user sends hi, hello, hey, /start \nor any short greeting (less than 5 words):\n\nReply EXACTLY like this:\n\"Welcome to City Hospital! 😊\n\nHow can I help you today?\n1️⃣ Book an Appointment\n2️⃣ Cancel an Appointment\n\nPlease reply with 1 or 2\"\n\nSTEP 1B - HANDLE CHOICE:\nIf user replies 1 or \"book\" or \"appointment\":\n→ Go to STEP 2\n\nIf user replies 2 or \"cancel\" or \"cancel appointment\":\n→ Reply EXACTLY:\n\"Please share your Appointment ID to cancel.\nExample: APT-1778709907678\"\n→ Then go to CANCEL STEP directly\n\nSTEP 2 - EXTRACT DETAILS:\nWhen user shares their details, carefully extract:\n- name (exactly as user said)\n- age (number only)\n- phone (number only)\n- department based on health issue:\n  stomach/digestion/pet = Gastroenterology\n  heart/chest/dil = Cardiology\n  bones/joints/haddi = Orthopedics\n  anything else = General\n\nThen ask:\n\"Got your details! Which date and time \nworks for you? \nExample: Tuesday, 10:00 AM\"\n\nSTEP 2B - CHECK AVAILABILITY (MANDATORY):\nYou MUST use check_doctor_availability tool \nEVERY TIME before asking for confirmation.\n\nAfter getting date and time from user:\n1. Call check_doctor_availability tool\n2. Find doctors matching the department\n3. Check if requested day AND time EXISTS \n   exactly in their Available Slots column\n4. Also check HOSPITAL_APPOINTMENTS sheet \n   if that slot is already booked\n\nIf slot NOT available → reply:\n\"Sorry! That slot is not available. 😔\n\nHere are available slots for [department]:\n[List each doctor with their slots]\n\nWhich slot works for you?\"\n\nIf slot IS available → Go to STEP 3\n\nNEVER skip this check.\nNEVER confirm without checking availability.\nNEVER assume a slot is available.\n\nSTEP 3 - SHOW SUMMARY:\nWhen slot is confirmed available, show:\n\"Please confirm your appointment:\n👤 Name: [ACTUAL name]\n🎂 Age: [ACTUAL age]\n📞 Phone: [ACTUAL phone]\n🏥 Department: [ACTUAL department]\n👨‍⚕️ Doctor: [ACTUAL doctor name]\n📅 Date: [ACTUAL date]\n⏰ Time: [ACTUAL time]\n\nReply YES to confirm or NO to cancel\"\n\nSTEP 4 - FINAL CONFIRMATION:\nWhen user says yes, yeah, haan, confirm, ok, \nor any positive response,\nreply EXACTLY like this and nothing else:\n\nBOOKING_CONFIRMED\nName: [actual name]\nAge: [actual age]\nPhone: [actual phone]\nDepartment: [actual department]\nDoctor: [actual doctor name]\nDate: [actual date]\nTime: [actual time]\n\nDO NOT add any extra text.\nDO NOT add \"Great!\" or \"Done!\" before it.\nDO NOT add anything after it.\nONLY output the BOOKING_CONFIRMED block.\nThis is extremely important.\n\nSTEP 5 - NO/CANCEL BOOKING:\nIf user says NO or no or nahi when \nconfirming appointment, reply:\n\"No problem! Type 'hi' to start again. 😊\"\n\nCANCEL STEP:\nWhen user gives Appointment ID starting \nwith APT-, reply EXACTLY like this \nand nothing else:\n\nCANCEL_CONFIRMED\nAppointmentID: [actual appointment id]\n\nDO NOT add any extra text.\nONLY output the CANCEL_CONFIRMED block.\n\nIMPORTANT RULES:\n- ALWAYS use check_doctor_availability \n  tool before confirming any slot\n- ALWAYS fill actual values, never write\n  [name] or [age] as placeholder\n- Use chat history to remember all details\n- Never ask for details already provided\n- One step at a time only\n- If user asks anything unrelated say:\n  \"Sorry, I can only help with \n  hospital appointments.\"\n\nCurrent user message: \n{{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        288,
+        0
+      ],
+      "id": "0116d3ea-671b-4832-a771-b0250dd38cd8",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "BOOKING_CONFIRMED",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "id": "05791874-5585-447e-a8a1-80486688ff12"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "6d73f252-2f1d-469c-a9a1-564120f9085a",
+      "name": "Check Booking Confirmed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        688,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const output = $input.item.json.output || $input.item.json.text || '';\n\nconst nameMatch = output.match(/Name:\\s*(.+)/);\nconst ageMatch = output.match(/Age:\\s*(.+)/);\nconst phoneMatch = output.match(/Phone:\\s*(.+)/);\nconst departmentMatch = output.match(/Department:\\s*(.+)/);\nconst dateMatch = output.match(/Date:\\s*(.+)/);\nconst timeMatch = output.match(/Time:\\s*(.+)/);\n\nreturn {\n  name: nameMatch ? nameMatch[1].trim() : '',\n  age: ageMatch ? ageMatch[1].trim() : '',\n  phone: phoneMatch ? phoneMatch[1].trim() : '',\n  department: departmentMatch ? departmentMatch[1].trim() : '',\n  date: dateMatch ? dateMatch[1].trim() : '',\n  time: timeMatch ? timeMatch[1].trim() : '',\n  output: output\n};"
+      },
+      "id": "ec8a4d60-eea7-425c-a5fe-69b4bcaff5e9",
+      "name": "Parse Booking Details",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        -192
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=✅ Your appointment is confirmed!\n\n🆔 Appointment ID: {{ $('Append row in sheet').item.json['Appointment ID'] }}\n👤 Name: {{ $('Parse Booking Details').item.json.name }}\n🎂 Age: {{ $('Parse Booking Details').item.json.age }}\n📞 Phone: {{ $('Parse Booking Details').item.json.phone }}\n🏥 Department: {{ $('Parse Booking Details').item.json.department }}\n📅 Date: {{ $('Parse Booking Details').item.json.date }}\n⏰ Time: {{ $('Parse Booking Details').item.json.time }}\n\nSee you soon at City Hospital! 🏥",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "bd149f87-dc2f-40a1-980d-e0194324b273",
+      "name": "Send Confirmation Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        -192
+      ],
+      "webhookId": "259e8beb-d36a-4e7e-9147-95696a727afa",
+      "credentials": {
+        "telegramApi": {
+          "id": "e9y9eTuITiFuwZpU",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "17L4eRIIYXVqGpEFufBjumpfVKLUnpIbYKYQJiQVxxVs",
+          "mode": "list",
+          "cachedResultName": "Healthcare_Appointments",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17L4eRIIYXVqGpEFufBjumpfVKLUnpIbYKYQJiQVxxVs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17L4eRIIYXVqGpEFufBjumpfVKLUnpIbYKYQJiQVxxVs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Appointment ID": "={{ $json.appointmentId }}",
+            "Status": "Cancelled"
+          },
+          "matchingColumns": [
+            "Appointment ID"
+          ],
+          "schema": [
+            {
+              "id": "Appointment ID",
+              "displayName": "Appointment ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Patient Name",
+              "displayName": "Patient Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram Chat ID",
+              "displayName": "Telegram Chat ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Doctor",
+              "displayName": "Doctor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time",
+              "displayName": "Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Booked On",
+              "displayName": "Booked On",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "d81e2030-2f78-49c5-ad14-478a24c35566",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4yULmbm40vkOfu8B",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $(\"AI Agent\").item.json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "e284816b-6b87-4a31-a260-9f7212102d18",
+      "name": "Send Conversation Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        192
+      ],
+      "webhookId": "b71a83af-48eb-4024-b6fa-57a042f670ba",
+      "credentials": {
+        "telegramApi": {
+          "id": "e9y9eTuITiFuwZpU",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get row(s) in sheeUse this tool to check which doctors are \navailable, their departments, available days \nand time slots before booking an appointment. \nAlways use this before confirming any booking.t in Google Sheets",
+        "documentId": {
+          "__rl": true,
+          "value": "17L4eRIIYXVqGpEFufBjumpfVKLUnpIbYKYQJiQVxxVs",
+          "mode": "list",
+          "cachedResultName": "Doctors",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17L4eRIIYXVqGpEFufBjumpfVKLUnpIbYKYQJiQVxxVs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17L4eRIIYXVqGpEFufBjumpfVKLUnpIbYKYQJiQVxxVs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        224
+      ],
+      "id": "050e006b-a643-4184-a42c-b6393fd3f2ce",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4yULmbm40vkOfu8B",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e26b5d94-2d43-4fa6-8d96-cdb7330120ba",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "CANCEL_CONFIRMED",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "07194eaf-6e05-4990-aa79-712a47a59fb7",
+      "name": "Check Cancel Confirmed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        912,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const output = $input.item.json.output || '';\n\nconst appointmentIdMatch = output.match(/AppointmentID:\\s*(.+)/);\n\nreturn {\n  appointmentId: appointmentIdMatch ? appointmentIdMatch[1].trim() : '',\n  output: output\n};"
+      },
+      "id": "3df6956e-8fba-4721-8112-0f9c0d15c02c",
+      "name": "Parse Cancel Details",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Your appointment has been cancelled!\n\n🆔 Appointment ID: {{ $('Parse Cancel Details').item.json.appointmentId }}\n\nType \"hi\" to book a new appointment. 🏥",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "e6ae4247-1dd7-4472-b386-ce82aac1c7f7",
+      "name": "Send Cancellation Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1584,
+        0
+      ],
+      "webhookId": "5f0596f0-fcde-404e-9f14-163d97089dea",
+      "credentials": {
+        "telegramApi": {
+          "id": "e9y9eTuITiFuwZpU",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        224
+      ],
+      "id": "5e1d4b11-0b31-4c31-bbb8-2feb509f14cc",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hbjFhiq4El38wSnX",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send Confirmation Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Check Booking Confirmed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Check Booking Confirmed": {
+      "main": [
+        [
+          {
+            "node": "Parse Booking Details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check Cancel Confirmed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Booking Details": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send Cancellation Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Cancel Confirmed": {
+      "main": [
+        [
+          {
+            "node": "Parse Cancel Details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Conversation Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Cancel Details": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Cancellation Message": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4b3770a6-a0e9-4920-98ce-ff483743c0be",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d761f2b4f78d995249d184606f426b7ee82dcfe3bcdea532ef3b5eb59c67f2fe"
+  },
+  "id": "6CKlTZswElt3CZN9",
+  "tags": []
+}
